@@ -1,0 +1,19 @@
+spring:
+  liquibase:
+    change-log: db/changelog/changelog-master.yml
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: 102007fs
+    hikari:
+      schema: test-api
+  jpa:
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: validate
+        show_sql: true
+        format_sql: true
+
+
