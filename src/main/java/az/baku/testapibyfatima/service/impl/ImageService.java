@@ -61,4 +61,33 @@ public class ImageService {
             throw new ApplicationException(new ExceptionResponse(ExceptionEnums.PRODUCT_NOT_FOUND.getMessage(), HttpStatus.NOT_FOUND));
         }
     }
+
+
+    public ResponseEntity<String> findAndDeleteFileByName(long id) {
+        File directory = new File(uploadDir);
+        if (!directory.exists() || !directory.isDirectory()) {
+            throw new ApplicationException(new ExceptionResponse("Upload directory not found", HttpStatus.NOT_FOUND));
+        }
+        File[] files = directory.listFiles((dir, name) -> name.equals(id+".jpg"));
+        if (files != null && files.length > 0) {
+            File file1 = files[0];
+            if (file1.delete()) {
+                System.out.println("File deleted successfully: " + id+".jpg");
+            } else {
+                throw new ApplicationException(new ExceptionResponse("Failed to delete the file", HttpStatus.INTERNAL_SERVER_ERROR));
+            }
+        } else {
+            throw new ApplicationException(new ExceptionResponse("File not found", HttpStatus.NOT_FOUND));
+        }
+        return null;
+    }
+
+    public void updateImage(MultipartFile file, long id) {
+        findAndDeleteFileByName(id);
+        try {
+            saveFileToDatabase(file, id);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

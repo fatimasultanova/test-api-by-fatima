@@ -2,6 +2,7 @@ package az.baku.testapibyfatima.controller;
 
 import az.baku.testapibyfatima.dto.request.ProductRequest;
 import az.baku.testapibyfatima.dto.request.Request;
+import az.baku.testapibyfatima.exception.ApplicationException;
 import az.baku.testapibyfatima.service.impl.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
@@ -34,6 +35,21 @@ public class ImageController {
             return ResponseEntity.ok("File uploaded successfully");
         } catch (IOException e) {
             return ResponseEntity.status(500).body("File upload failed: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping
+    public ResponseEntity<String> deleteImage(Request<ProductRequest> request) {
+        return imageService.findAndDeleteFileByName(request.getId());
+    }
+
+    @PutMapping
+    public ResponseEntity<String> updateImage(@RequestParam("file") MultipartFile file, @RequestParam("id") long id) {
+        try {
+            imageService.updateImage(file, id);
+            return ResponseEntity.ok("Image updated successfully");
+        }catch (ApplicationException e){
+            return ResponseEntity.status(500).body("File update failed: " + e.getMessage());
         }
     }
 }
